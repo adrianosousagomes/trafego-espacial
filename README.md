@@ -1,7 +1,6 @@
 # trafego-espacial
 
-########## Sistema de Tráfego Espacial ###################
-########## 05/07/2017 - Adriano S. Gomes 				##########
+########## Sistema de Tráfego Espacial -05/07/2017 - Adriano S. Gomes ##########
 
 Tecnologias utilizadas: Java, JSF, PrimeFaces, Maven, Junit.
 
