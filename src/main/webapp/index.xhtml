@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+    	<title>Plano de Voo</title>
+    	
+    	<style>
+    		.borderNone tr, td {
+    			border: none !important;
+    		}
+    		
+    		h4 {
+    			margin: 0;
+    			padding-top: 10px;
+    			padding-bottom: 5px;
+    		}
+    		
+    		.titulo {
+    			font-weight: bold;
+    		}
+    		
+    		.backgroundNone tr, td {
+    			background: none;
+    		}
+    	</style>
+    </h:head>
+    
+    <h:body bgcolor="white">
+    	<h2>Planos de Voo</h2>    	
+    	
+    	<h:form id="form">
+    	
+    		<p:commandLink action="#{planoVooBean.novo}" update="formCadastro">
+    			<p:graphicImage url="/resources/images/icon-add.png" width="40" title="Criar plano de voo"></p:graphicImage>
+    		</p:commandLink>
+    		
+			<p:spacer height="30" style="display: block;"/>
+    	
+	    	<p:dataTable var="plano" value="#{planoVooBean.planos}" emptyMessage="Nenhum plano de voo foi cadastrado">
+			    <p:column headerText="Nave">			        
+			        <p:panelGrid columns="2" styleClass="borderNone backgroundNone">
+						<h:outputText value="Nome: " styleClass="titulo"/>
+						<h:outputText value="#{plano.nave.name}" />					
+					
+						<h:outputText value="Modelo: " styleClass="titulo"/>
+						<h:outputText value="#{plano.nave.model}" />
+						
+						<h:outputText value="Capacidade de passageiros: " styleClass="titulo"/>
+						<h:outputText value="#{plano.nave.passengers}" />				 
+					</p:panelGrid>
+			    </p:column>
+			 
+			    <p:column headerText="Planeta Destino">
+			        <p:panelGrid columns="2" styleClass="borderNone backgroundNone">
+						<h:outputText value="Nome: " styleClass="titulo"/>
+						<h:outputText value="#{plano.planeta.name}" />					
+					
+						<h:outputText value="Diâmetro: " styleClass="titulo"/>
+						<h:outputText value="#{plano.planeta.diameter}" />
+						
+						<h:outputText value="Clima: " styleClass="titulo"/>
+						<h:outputText value="#{plano.planeta.climate}" />
+						
+						<h:outputText value="Terreno: " styleClass="titulo"/>
+						<h:outputText value="#{plano.planeta.terrain}" />
+						
+						<h:outputText value="Pupulação: " styleClass="titulo"/>
+						<h:outputText value="#{plano.planeta.population}" />
+					</p:panelGrid>
+			    </p:column>
+			 
+			    <p:column headerText="Tripulantes da Nave" style="vertical-align:top">
+			        <p:dataTable id="tableTripulantes" var="trip" value="#{plano.tripulantes}" emptyMessage="Nenhum tripulante cadastrado.">
+					    <p:column headerText="Nome" style="text-align: center;">
+					        <h:outputText value="#{trip.name}" />
+					    </p:column>
+					 
+					    <p:column headerText="Sexo" style="text-align: center;">
+					        <h:outputText value="#{trip.gender}" />
+					    </p:column>
+					</p:dataTable>
+			    </p:column>
+			</p:dataTable>
+			
+			<p:messages />
+		
+    	</h:form>
+    	
+    	<p:dialog header="Criar plano de voo" widgetVar="modalNovoPlanoVoo" modal="true" width="550">
+			
+			<h:form id="formCadastro">
+				<p:panelGrid styleClass="borderNone" id="panelDialogCadastro" rendered="#{planoVooBean.planoVoo != null}">
+					<p:row>
+						<p:column>					
+							<p:outputLabel for="console" value="Nave:" />
+						</p:column>
+						<p:column colspan="2">
+					        <p:selectOneMenu id="console" value="#{planoVooBean.planoVoo.nave}" converter="entityConverter">
+					            <f:selectItem itemLabel="Selecione...." itemValue="" />
+					            <f:selectItems value="#{planoVooBean.comboNave}" itemLabel="#{n.name}" itemValue="#{n}" var="n"/>
+					            <f:ajax event="change" render="formCadastro"></f:ajax>
+					        </p:selectOneMenu>
+				        </p:column>
+			        </p:row>
+			        
+			        <p:row>
+						<p:column>
+				    		<p:outputLabel for="planeta" value="Planeta destino:" />
+				    	</p:column>
+				        <p:column colspan="2">
+					        <p:selectOneMenu id="planeta" value="#{planoVooBean.planoVoo.planeta}" converter="entityConverter" disabled="#{planoVooBean.planoVoo.nave == null}">
+					            <f:selectItem itemLabel="Selecione...." itemValue="" />
+					            <f:selectItems value="#{planoVooBean.comboPlaneta}" itemLabel="#{n.name}" itemValue="#{n}" var="n"/>
+					            <f:ajax event="change" render="formCadastro"></f:ajax>
+					        </p:selectOneMenu>
+				        </p:column>
+				     </p:row>
+			        
+			        <p:row>
+						<p:column>
+							<p:outputLabel for="tripulante" value="Adicionar tripulante:" />	
+			        	</p:column>
+				        <p:column>        	
+					        <p:selectOneMenu id="tripulante" value="#{planoVooBean.tripulanteSelecionado}" converter="entityConverter" disabled="#{planoVooBean.planoVoo.planeta == null}">
+					            <f:selectItem itemLabel="Selecione...." itemValue="" />
+				            	<f:selectItems value="#{planoVooBean.comboTripulante}" itemLabel="#{n.name}" itemValue="#{n}" var="n"/>
+					        </p:selectOneMenu>
+					        <p:spacer width="10"/>
+			        	</p:column>
+			        
+				        <p:column>
+				        	<p:commandLink action="#{planoVooBean.adicionarTripulante}" update="formCadastro" disabled="#{planoVooBean.planoVoo.planeta == null}">
+				    			<p:graphicImage url="/resources/images/icon-person-add.png" width="28" title="Adicionar tripulante"></p:graphicImage>
+				    		</p:commandLink>
+				        </p:column>
+				      </p:row>
+				 
+				</p:panelGrid>
+				
+				<h4>Tripulantes</h4>
+				
+				<p:dataTable id="tableTripulantes" var="trip" value="#{planoVooBean.planoVoo.tripulantes}" emptyMessage="Nenhum tripulante cadastrado.">
+				    <p:column headerText="Nome" style="text-align: center;">
+				        <h:outputText value="#{trip.name}" />
+				    </p:column>
+				 
+				    <p:column headerText="Sexo" style="text-align: center;">
+				        <h:outputText value="#{trip.gender}" />
+				    </p:column>
+				</p:dataTable>
+					    	
+				<p:spacer height="15" style="display: block;"/>
+				
+				<p:messages />
+				    
+				<p:commandButton value="Cancelar" action="#{planoVooBean.cancelar}"/>
+				<p:spacer width="15"/>
+				<p:commandButton value="Salvar" actionListener="#{planoVooBean.salvar}" update="formCadastro, form"/>
+				</h:form>
+			        
+			</p:dialog>
+    	
+    </h:body>
+</html>
